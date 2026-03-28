@@ -106,8 +106,18 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const heartIdRef = useRef(0);
+  const feedScrollRef = useRef<HTMLDivElement>(null);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
   const [feedTab, setFeedTab] = useState<"foryou" | "following">("foryou");
+
+  const scrollToVideo = useCallback((index: number) => {
+    const el = feedScrollRef.current;
+    if (!el) return;
+    const clamped = Math.max(0, Math.min(VIDEOS.length - 1, index));
+    setCurrentVideoIndex(clamped);
+    el.scrollTo({ top: clamped * el.clientHeight, behavior: "smooth" });
+  }, []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -214,7 +224,53 @@ export default function Index() {
 
         {/* ---- FEED ---- */}
         {activeTab === "feed" && (
-          <div className="scrollbar-hide" style={{ overflowY: "scroll", height: "calc(100vh - 112px)", scrollSnapType: "y mandatory" }}>
+          <div className="relative">
+          {/* Up button */}
+          <button
+            onClick={() => scrollToVideo(currentVideoIndex - 1)}
+            disabled={currentVideoIndex === 0}
+            className="fixed left-1/2 -translate-x-1/2 z-30 flex items-center justify-center transition-all duration-300"
+            style={{
+              top: "68px",
+              width: "44px", height: "44px",
+              borderRadius: "50%",
+              background: currentVideoIndex === 0 ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              backdropFilter: "blur(12px)",
+              opacity: currentVideoIndex === 0 ? 0.3 : 1,
+            }}
+          >
+            <Icon name="ChevronUp" size={22} className="text-white" />
+          </button>
+
+          {/* Down button */}
+          <button
+            onClick={() => scrollToVideo(currentVideoIndex + 1)}
+            disabled={currentVideoIndex === VIDEOS.length - 1}
+            className="fixed left-1/2 -translate-x-1/2 z-30 flex items-center justify-center transition-all duration-300"
+            style={{
+              bottom: "84px",
+              width: "44px", height: "44px",
+              borderRadius: "50%",
+              background: currentVideoIndex === VIDEOS.length - 1 ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              backdropFilter: "blur(12px)",
+              opacity: currentVideoIndex === VIDEOS.length - 1 ? 0.3 : 1,
+            }}
+          >
+            <Icon name="ChevronDown" size={22} className="text-white" />
+          </button>
+
+          <div
+            ref={feedScrollRef}
+            className="scrollbar-hide"
+            style={{ overflowY: "scroll", height: "calc(100vh - 112px)", scrollSnapType: "y mandatory" }}
+            onScroll={(e) => {
+              const el = e.currentTarget;
+              const idx = Math.round(el.scrollTop / el.clientHeight);
+              setCurrentVideoIndex(idx);
+            }}
+          >
             {VIDEOS.map((video, i) => (
               <div
                 key={video.id}
@@ -306,6 +362,7 @@ export default function Index() {
                 </div>
               </div>
             ))}
+          </div>
           </div>
         )}
 
