@@ -210,100 +210,98 @@ export default function Index() {
       </header>
 
       {/* Content */}
-      <main className="pt-16 pb-20 max-w-md mx-auto relative z-10">
+      <main className={`max-w-md mx-auto relative z-10 ${activeTab !== "feed" ? "pt-16 pb-20" : ""}`}>
 
         {/* ---- FEED ---- */}
         {activeTab === "feed" && (
-          <div className="px-3 py-4 space-y-4">
+          <div className="scrollbar-hide" style={{ overflowY: "scroll", height: "calc(100vh - 112px)", scrollSnapType: "y mandatory" }}>
             {VIDEOS.map((video, i) => (
               <div
                 key={video.id}
-                className="video-card rounded-3xl overflow-hidden"
-                style={{ animation: `fade-in 0.4s ease-out ${i * 0.08}s both` }}
+                className="relative w-full flex-shrink-0"
+                style={{ height: "calc(100vh - 112px)", scrollSnapAlign: "start" }}
               >
-                <div className="relative overflow-hidden rounded-3xl" style={{ aspectRatio: "9/16", maxHeight: "520px" }}>
-                  <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent" />
+                <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent" />
 
-                  {/* Play overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
-                    <div className="w-16 h-16 rounded-full glass flex items-center justify-center"
-                      style={{ border: "2px solid rgba(255,255,255,0.3)" }}>
-                      <Icon name="Play" size={24} className="text-white ml-1" />
-                    </div>
+                {/* Play overlay */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                  <div className="w-16 h-16 rounded-full glass flex items-center justify-center"
+                    style={{ border: "2px solid rgba(255,255,255,0.3)" }}>
+                    <Icon name="Play" size={24} className="text-white ml-1" />
                   </div>
+                </div>
 
-                  {/* Right actions */}
-                  <div className="absolute right-3 bottom-24 flex flex-col items-center gap-4">
-                    {/* Like */}
-                    <button
-                      onClick={(e) => handleLike(video.id, e)}
-                      className="flex flex-col items-center gap-1"
+                {/* Right actions */}
+                <div className="absolute right-3 bottom-24 flex flex-col items-center gap-4">
+                  {/* Like */}
+                  <button
+                    onClick={(e) => handleLike(video.id, e)}
+                    className="flex flex-col items-center gap-1"
+                  >
+                    <div
+                      className={`w-12 h-12 rounded-full glass flex items-center justify-center transition-all duration-200 ${likeAnim[video.id] ? "like-burst" : ""} hover:scale-110`}
+                      style={likes[video.id]
+                        ? { background: "rgba(255,45,120,0.3)", border: "1.5px solid #ff2d78", boxShadow: "0 0 20px rgba(255,45,120,0.6)" }
+                        : {}}
                     >
-                      <div
-                        className={`w-11 h-11 rounded-full glass flex items-center justify-center transition-all duration-200 ${likeAnim[video.id] ? "like-burst" : ""} hover:scale-110`}
-                        style={likes[video.id]
-                          ? { background: "rgba(255,45,120,0.3)", border: "1.5px solid #ff2d78", boxShadow: "0 0 16px rgba(255,45,120,0.5)" }
-                          : {}}
-                      >
-                        <Icon name="Heart" size={20} className={likes[video.id] ? "text-[#ff2d78]" : "text-white"} />
-                      </div>
-                      <span className="text-xs font-bold text-white drop-shadow">{formatCount(likeCounts[video.id])}</span>
-                    </button>
+                      <Icon name="Heart" size={22} className={likes[video.id] ? "text-[#ff2d78]" : "text-white"} />
+                    </div>
+                    <span className="text-xs font-bold text-white drop-shadow">{formatCount(likeCounts[video.id])}</span>
+                  </button>
 
-                    {/* Dislike */}
-                    <button
-                      onClick={() => handleDislike(video.id)}
-                      className="flex flex-col items-center gap-1"
+                  {/* Dislike */}
+                  <button
+                    onClick={() => handleDislike(video.id)}
+                    className="flex flex-col items-center gap-1"
+                  >
+                    <div
+                      className="w-12 h-12 rounded-full glass flex items-center justify-center transition-all duration-200 hover:scale-110"
+                      style={dislikes[video.id]
+                        ? { background: "rgba(0,229,255,0.2)", border: "1.5px solid #00e5ff", boxShadow: "0 0 20px rgba(0,229,255,0.5)" }
+                        : {}}
                     >
-                      <div
-                        className="w-11 h-11 rounded-full glass flex items-center justify-center transition-all duration-200 hover:scale-110"
-                        style={dislikes[video.id]
-                          ? { background: "rgba(0,229,255,0.2)", border: "1.5px solid #00e5ff", boxShadow: "0 0 16px rgba(0,229,255,0.4)" }
-                          : {}}
-                      >
-                        <Icon name="ThumbsDown" size={18} className={dislikes[video.id] ? "text-[#00e5ff]" : "text-white"} />
-                      </div>
-                      <span className="text-xs font-bold text-white drop-shadow">{formatCount(dislikeCounts[video.id])}</span>
-                    </button>
+                      <Icon name="ThumbsDown" size={20} className={dislikes[video.id] ? "text-[#00e5ff]" : "text-white"} />
+                    </div>
+                    <span className="text-xs font-bold text-white drop-shadow">{formatCount(dislikeCounts[video.id])}</span>
+                  </button>
 
-                    {/* Comment */}
-                    <button className="flex flex-col items-center gap-1 hover:scale-110 transition-transform">
-                      <div className="w-11 h-11 rounded-full glass flex items-center justify-center">
-                        <Icon name="MessageCircle" size={20} className="text-white" />
-                      </div>
-                      <span className="text-xs font-bold text-white drop-shadow">{formatCount(video.comments)}</span>
-                    </button>
+                  {/* Comment */}
+                  <button className="flex flex-col items-center gap-1 hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-full glass flex items-center justify-center">
+                      <Icon name="MessageCircle" size={22} className="text-white" />
+                    </div>
+                    <span className="text-xs font-bold text-white drop-shadow">{formatCount(video.comments)}</span>
+                  </button>
 
-                    {/* Share */}
-                    <button className="flex flex-col items-center gap-1 hover:scale-110 transition-transform">
-                      <div className="w-11 h-11 rounded-full glass flex items-center justify-center">
-                        <Icon name="Share2" size={18} className="text-white" />
-                      </div>
-                      <span className="text-xs font-bold text-white drop-shadow">{formatCount(video.shares)}</span>
+                  {/* Share */}
+                  <button className="flex flex-col items-center gap-1 hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-full glass flex items-center justify-center">
+                      <Icon name="Share2" size={20} className="text-white" />
+                    </div>
+                    <span className="text-xs font-bold text-white drop-shadow">{formatCount(video.shares)}</span>
+                  </button>
+                </div>
+
+                {/* Bottom info */}
+                <div className="absolute bottom-0 left-0 right-16 p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl flex-shrink-0"
+                      style={{ background: "linear-gradient(135deg, #ff2d78, #b44dff)" }}>
+                      {video.avatar}
+                    </div>
+                    <span className="font-bold text-sm text-white">{video.user}</span>
+                    <button className="ml-1 px-3 py-1 rounded-full text-xs font-bold border border-white/40 text-white hover:bg-white/10 transition-colors flex-shrink-0">
+                      + Подписаться
                     </button>
                   </div>
-
-                  {/* Bottom info */}
-                  <div className="absolute bottom-0 left-0 right-14 p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0"
-                        style={{ background: "linear-gradient(135deg, #ff2d78, #b44dff)" }}>
-                        {video.avatar}
-                      </div>
-                      <span className="font-bold text-sm text-white">{video.user}</span>
-                      <button className="ml-1 px-2 py-0.5 rounded-full text-xs font-bold border border-white/30 text-white hover:bg-white/10 transition-colors flex-shrink-0">
-                        + Подписаться
-                      </button>
+                  <p className="text-sm text-white/90 font-semibold leading-snug mb-2 line-clamp-2">{video.title}</p>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ background: "linear-gradient(135deg, #ff2d78, #b44dff)" }}>
+                      <Icon name="Music" size={10} className="text-white" />
                     </div>
-                    <p className="text-sm text-white/90 font-semibold leading-snug mb-2 line-clamp-2">{video.title}</p>
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ background: "linear-gradient(135deg, #ff2d78, #b44dff)" }}>
-                        <Icon name="Music" size={10} className="text-white" />
-                      </div>
-                      <span className="text-xs text-white/60 font-medium truncate">{video.song}</span>
-                    </div>
+                    <span className="text-xs text-white/60 font-medium truncate">{video.song}</span>
                   </div>
                 </div>
               </div>
