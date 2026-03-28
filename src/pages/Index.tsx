@@ -225,41 +225,39 @@ export default function Index() {
         {/* ---- FEED ---- */}
         {activeTab === "feed" && (
           <div className="relative">
-          {/* Up button */}
-          <button
-            onClick={() => scrollToVideo(currentVideoIndex - 1)}
-            disabled={currentVideoIndex === 0}
-            className="fixed left-1/2 -translate-x-1/2 z-30 flex items-center justify-center transition-all duration-300"
-            style={{
-              top: "68px",
-              width: "44px", height: "44px",
-              borderRadius: "50%",
-              background: currentVideoIndex === 0 ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.12)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              backdropFilter: "blur(12px)",
-              opacity: currentVideoIndex === 0 ? 0.3 : 1,
-            }}
-          >
-            <Icon name="ChevronUp" size={22} className="text-white" />
-          </button>
-
-          {/* Down button */}
-          <button
-            onClick={() => scrollToVideo(currentVideoIndex + 1)}
-            disabled={currentVideoIndex === VIDEOS.length - 1}
-            className="fixed left-1/2 -translate-x-1/2 z-30 flex items-center justify-center transition-all duration-300"
-            style={{
-              bottom: "84px",
-              width: "44px", height: "44px",
-              borderRadius: "50%",
-              background: currentVideoIndex === VIDEOS.length - 1 ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.12)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              backdropFilter: "blur(12px)",
-              opacity: currentVideoIndex === VIDEOS.length - 1 ? 0.3 : 1,
-            }}
-          >
-            <Icon name="ChevronDown" size={22} className="text-white" />
-          </button>
+          {/* Up / Down nav buttons — right side, vertically centered */}
+          <div className="fixed z-30 flex flex-col gap-2" style={{ right: "12px", top: "50%", transform: "translateY(-50%)" }}>
+            <button
+              onClick={() => scrollToVideo(currentVideoIndex - 1)}
+              disabled={currentVideoIndex === 0}
+              className="flex items-center justify-center transition-all duration-300 active:scale-90"
+              style={{
+                width: "40px", height: "40px",
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.12)",
+                border: "1px solid rgba(255,255,255,0.18)",
+                backdropFilter: "blur(12px)",
+                opacity: currentVideoIndex === 0 ? 0.25 : 1,
+              }}
+            >
+              <Icon name="ChevronUp" size={20} className="text-white" />
+            </button>
+            <button
+              onClick={() => scrollToVideo(currentVideoIndex + 1)}
+              disabled={currentVideoIndex === VIDEOS.length - 1}
+              className="flex items-center justify-center transition-all duration-300 active:scale-90"
+              style={{
+                width: "40px", height: "40px",
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.12)",
+                border: "1px solid rgba(255,255,255,0.18)",
+                backdropFilter: "blur(12px)",
+                opacity: currentVideoIndex === VIDEOS.length - 1 ? 0.25 : 1,
+              }}
+            >
+              <Icon name="ChevronDown" size={20} className="text-white" />
+            </button>
+          </div>
 
           <div
             ref={feedScrollRef}
